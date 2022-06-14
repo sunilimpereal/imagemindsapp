@@ -1,0 +1,26 @@
+Flutter run key commands.
+h List all available interactive commands.
+c Clear the screen
+q Quit (terminate the application on the device).
+E/flutter (26769): [ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: Null check operator used on a null value
+E/flutter (26769): #0      State.setState (package:flutter/src/widgets/framework.dart:1129)
+E/flutter (26769): #1      _LandscapeVedioPlayerState.build.<anonymous closure>.<anonymous closure>.<anonymous closure> (package:imagemindsapp/subpages/grade/screens/landscape_player.dart:243)
+E/flutter (26769): <asynchronous suspension>
+E/flutter (26769):
+E/flutter (26769): [ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: Null check operator used on a null value
+E/flutter (26769): #0      State.setState (package:flutter/src/widgets/framework.dart:1129)
+E/flutter (26769): #1      _LandscapeVedioPlayerState.build.<anonymous closure>.<anonymous closure>.<anonymous closure> (package:imagemindsapp/subpages/grade/screens/landscape_player.dart:243)
+E/flutter (26769): <asynchronous suspension>
+E/flutter (26769):
+E/flutter (26769): [ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: Null check operator used on a null value
+E/flutter (26769): #0      State.setState (package:flutter/src/widgets/framework.dart:1129)
+E/flutter (26769): #1      _LandscapeVedioPlayerState.initState.<anonymous closure> (package:imagemindsapp/subpages/grade/screens/landscape_player.dart:37) 
+E/flutter (26769): <asynchronous suspension>
+E/flutter (26769):
+E/AndroidRuntime(26769): FATAL EXCEPTION: AWindowHandler
+E/AndroidRuntime(26769): Process: com.example.imagemindsapp, PID: 26769
+E/AndroidRuntime(26769): java.lang.RuntimeException: Error during detachFromGLContext (see logcat for details)
+E/AndroidRuntime(26769):        at android.graphics.SurfaceTexture.detachFromGLContext(SurfaceTexture.java:274)
+E/AndroidRuntime(26769):        at org.videolan.libvlc.AWindow$SurfaceTextureThread.detachFromGLContext(AWindow.java:672)
+E/AndroidRuntime(26769):        at org.videolan.libvlc.AWindow$SurfaceTextureThread.access$1600(AWindow.java:580)
+E/AndroidRuntime(26769):        at org.videolan.libvlc.AWindow.SurfaceTexture_detachFromGLContext(AWindow.java:731)
