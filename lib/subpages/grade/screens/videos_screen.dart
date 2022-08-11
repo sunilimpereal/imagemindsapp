@@ -34,14 +34,11 @@ class _VideosScreenState extends State<VideosScreen> {
   @override
   void initState() {
     _scrollController.addListener(() {
-
-      double part  = _scrollController.position.maxScrollExtent /3;
-      int pos = (part/_scrollController.offset).ceil();
- 
-
+      double part = _scrollController.position.maxScrollExtent / 3;
+      int pos = (part / _scrollController.offset).ceil();
     });
     super.initState();
-     SystemChrome.setPreferredOrientations([
+    SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
@@ -52,29 +49,32 @@ class _VideosScreenState extends State<VideosScreen> {
     GradeBloc gradeBloc = GradeProvider.of(context);
     double width = MediaQuery.of(context).size.width * 0.002;
     double height = MediaQuery.of(context).size.height * 0.002;
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: 80 * height,
-          ),
-          Stack(
-            children: [
-              StreamBuilder<List<VideoModel>>(
-                  stream: gradeBloc.videoListStream,
-                  builder: (context, snapshot) {
-                    if(!snapshot.hasData && snapshot.connectionState == ConnectionState.waiting){
-                      return Center(child: CircularProgressIndicator(color: Colors.red,));
-                    }
-                    if (!snapshot.hasData) {
-                      return Center(child: Text("Error Fetching Videos"));
-                    }
-                    if (snapshot.data!.isEmpty) {
-                      return Center(child: Text("No Videos in the grade!"));
-                    }
-                    return Container(
-                      width: MediaQuery.of(context).size.width ,
+    return StreamBuilder<List<VideoModel>>(
+        stream: gradeBloc.videoListStream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData && snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+                child: CircularProgressIndicator(
+              color: Colors.red,
+            ));
+          }
+          if (!snapshot.hasData) {
+            return Center(child: Text("Error Fetching Videos"));
+          }
+          if (snapshot.data!.isEmpty) {
+            return Center(child: Text("No Videos in the grade!"));
+          }
+          return Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 80 * height,
+                ),
+                Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         controller: _scrollController,
@@ -84,63 +84,63 @@ class _VideosScreenState extends State<VideosScreen> {
                               split = split + 3;
                               i = i++;
                             }
-                           
+
                             return card(
                                 courseName: e.name, image: e.name, vedioName: e.filename, i: i);
                           }).toList(),
                         ),
                       ),
-                    );
-                  }),
-              Container(
-                // width: MediaQuery.of(context).size.width - (10*width),
-                height: 250 * height,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Arrows(
-                      left: true,
-                      ontap: () {
-                        setState(() {
-                          _scrollController.animateTo(
-                              _scrollController.position.pixels -
-                                  _scrollController.position.maxScrollExtent / 2,
-                              curve: Curves.ease,
-                              duration: Duration(milliseconds: 100));
-                        });
-                      },
                     ),
-                    Arrows(
-                      left: false,
-                      ontap: () {
-                        setState(() {
-                          _scrollController.animateTo(
-                              _scrollController.position.pixels +
-                                  _scrollController.position.maxScrollExtent / 2,
-                              curve: Curves.easeIn,
-                              duration: Duration(milliseconds: 100));
-                        });
-                      },
-                    )
+                    Container(
+                      // width: MediaQuery.of(context).size.width - (10*width),
+                      height: 250 * height,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Arrows(
+                            left: true,
+                            ontap: () {
+                              setState(() {
+                                _scrollController.animateTo(
+                                    _scrollController.position.pixels -
+                                        _scrollController.position.maxScrollExtent / snapshot.data!.length,
+                                    curve: Curves.ease,
+                                    duration: Duration(milliseconds: 100));
+                              });
+                            },
+                          ),
+                          Arrows(
+                            left: false,
+                            ontap: () {
+                              setState(() {
+                                _scrollController.animateTo(
+                                    _scrollController.position.pixels +
+                                        _scrollController.position.maxScrollExtent / snapshot.data!.length,
+                                    curve: Curves.easeIn,
+                                    duration: Duration(milliseconds: 100));
+                              });
+                            },
+                          )
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Container(
-                //   child: ball(gradeBloc),
-                // )
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Container(
+                      //   child: ball(gradeBloc),
+                      // )
+                    ],
+                  ),
+                )
               ],
             ),
-          )
-        ],
-      ),
-    );
+          );
+        });
   }
 
   Widget ball(GradeBloc gradeBloc) {
@@ -185,7 +185,7 @@ class _VideosScreenState extends State<VideosScreen> {
   }) {
     double width1 = MediaQuery.of(context).size.width * 0.002;
     double height1 = MediaQuery.of(context).size.height * 0.002;
-    double width = 140 * width1;
+    double width = 150 * width1;
     double height = 260 * height1;
 
     return VisibilityDetector(
@@ -228,8 +228,9 @@ class _VideosScreenState extends State<VideosScreen> {
                             image: image,
                             showPlay: true,
                           ),
+                          SizedBox(height: 8),
                           Container(
-                            height: height * 0.12,
+                            // height: height * 0.16,
                             width: width,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -291,51 +292,3 @@ class Arrows extends StatelessWidget {
     );
   }
 }
-//  card(
-//                         courseName: "Dot Painting Tactile",
-//                         image: "assets/images/preview01.png",
-//                         vedioName: "preview01",
-//                         i: 1,
-//                       ),
-//                       card(
-//                         courseName: "Clay Modelling Tactile",
-//                         image: "assets/images/preview02.png",
-//                         vedioName: "preview02",
-//                         i: 1,
-//                       ),
-//                       card(
-//                         courseName: "Representing Big and Small Digital",
-//                         image: "assets/images/preview03.png",
-//                         vedioName: "preview03",
-//                         i: 1,
-//                       ),
-//                       card(
-//                           courseName: "Creating a Rocking Toy Tactile",
-//                           image: "assets/images/preview04.png",
-//                           vedioName: "preview04",
-//                           i: 2),
-//                       card(
-//                           courseName: "Mirror Art Digital",
-//                           image: "assets/images/preview05.png",
-//                           vedioName: "preview05",
-//                           i: 2),
-//                       card(
-//                           courseName: "Creating a Symmetrical Paper Butterfly Tactile",
-//                           image: "assets/images/preview06.png",
-//                           vedioName: "preview06",
-//                           i: 2),
-//                       card(
-//                           courseName: "Drawing Symmetrical Comic Faces Digital",
-//                           image: "assets/images/preview07.png",
-//                           vedioName: "preview07",
-//                           i: 3),
-//                       card(
-//                           courseName: "String Art Tactile",
-//                           image: "assets/images/preview08.png",
-//                           vedioName: "preview08",
-//                           i: 3),
-//                       card(
-//                           courseName: " String Art Tactile",
-//                           image: "assets/images/preview09.png",
-//                           vedioName: "preview09",
-//                           i: 3),

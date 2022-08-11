@@ -27,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     LoginBloc? loginBloc = LoginProvider.of(context);
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
         body: SingleChildScrollView(
       child: Container(
@@ -59,25 +60,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.1,
-                      ),
-                      Text(
-                        "Sign In",
-                        textScaleFactor: 1,
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontFamily: AppFonts.kidsFont,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 0,
-                      ),
+                      // SizedBox(
+                      //   height: MediaQuery.of(context).size.height * 0.05,
+                      // ),
+
                       Column(children: [
                         Column(
                           children: [
+                            Text(
+                              "Sign In",
+                              textScaleFactor: 1,
+                              style: TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontFamily: AppFonts.kidsFont,
+                              ),
+                            ),
+                            SizedBox(
+                              height: height > 400 ? 32 : 10,
+                            ),
                             // email id
                             IMTextField(
                               width: 300,
@@ -128,7 +130,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (BuildContext context) => HomePageWrapper()));
+                                        builder: (BuildContext context) => HomePageWrapper(),
+                                      ));
                                 setState(() {
                                   loginFailFlag = !value;
                                 });
@@ -171,14 +174,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                     builder: (BuildContext context) => LoginScreenOTP()));
                           },
                           child: Container(
-                            padding: EdgeInsets.all(12),
+                            padding: EdgeInsets.all(height>400?12: 8),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(32),
                                 border: Border.all(width: 1, color: Colors.white)),
                             child: Text(
                               "Login with Mobile Number",
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                                 fontFamily: AppFonts.kidsFont,

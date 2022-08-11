@@ -2,12 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:imagemindsapp/authentication/bloc/login_stream.dart';
+import 'package:imagemindsapp/authentication/data/models/loginErrorModel.dart';
 import 'package:imagemindsapp/authentication/data/models/login_otp_request.dart';
 import 'package:imagemindsapp/authentication/data/models/login_request.dart';
 import 'package:imagemindsapp/authentication/data/models/login_response.dart';
 import 'package:imagemindsapp/authentication/data/models/logout_request.dart';
 import 'package:imagemindsapp/authentication/data/models/logout_response.dart';
 import 'package:imagemindsapp/authentication/data/models/otplogin_request_model.dart';
+import 'package:imagemindsapp/authentication/login/widgets/loginError.dart';
 import 'package:imagemindsapp/main.dart';
 import 'package:imagemindsapp/repository/repositry.dart';
 import 'package:imagemindsapp/utils/shared_pref.dart';
@@ -31,6 +33,8 @@ class AuthRepository {
         sharedPref.setAuthToken(token: "");
         return true;
       } else {
+        LoginErrorModel loginError = loginErrorModelFromJson(response.body);
+        showloginErrorDialog(context: context, errorMessage: loginError.detail);
         log('filaed 2');
         return false;
       }
@@ -59,6 +63,9 @@ class AuthRepository {
         LoginResponseModel loginOtpResponseModel = loginResponseModelFromJson(response.body);
         return loginOtpResponseModel;
       } else {
+        LoginErrorModel loginError = loginErrorModelFromJson(response.body);
+        showloginErrorDialog(context: context, errorMessage: loginError.detail);
+        log('filaed 2');
         log('filaed 2');
         return null;
       }

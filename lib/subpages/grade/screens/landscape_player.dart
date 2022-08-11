@@ -3,16 +3,18 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:typed_data';
-
 import 'package:aes_crypt_null_safe/aes_crypt_null_safe.dart';
 import 'package:disk_space/disk_space.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:imagemindsapp/subpages/grade/screens/widgets/player_menu.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';
 import 'dart:io';
+import 'package:screen/screen.dart';
 
 class LandscapeVedioPlayer extends StatefulWidget {
   String vedioName;
@@ -31,17 +33,17 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
   String error = "";
   double sliderValue = 0.0;
   bool isVideoNotFound = false;
-
+  bool vidInitialised = false;
   final stopwatch = Stopwatch()..start();
   @override
   void initState() {
     initialize();
-
     super.initState();
   }
 
-  initialize() async {
+  void initialize() async {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    
     // online
     // try {
     //   controller = VlcPlayerController.network(
@@ -58,6 +60,7 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
     //   setState(() {
     //     initialised = true;
     //   });
+
     //   // log(controller.toString());
     //   // log(controller.value.toString());
     //   // if (controller.value.duration.inSeconds == 0) {
@@ -65,9 +68,15 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
     //   //     error = "Video not found";
     //   //   });
     //   // }
+
     //   controller.addListener(() {
+    //       Screen.keepOn(true);
     //     setState(() {
     //       sliderValue = controller.value.position.inSeconds.toDouble();
+    //       if (controller.value.position.inMilliseconds.toDouble() > 0) {
+    //         vidInitialised = true;
+    //       }
+    //       ;
     //     });
     //   });
     // } catch (e) {
@@ -93,6 +102,7 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
         controller.addListener(() {
           setState(() {
             sliderValue = controller.value.position.inSeconds.toDouble();
+            Screen.keepOn(true);
           });
         });
       } else {
@@ -113,6 +123,7 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
           controller.addListener(() {
             setState(() {
               sliderValue = controller.value.position.inSeconds.toDouble();
+              Screen.keepOn(true);
             });
           });
           // });
@@ -190,6 +201,7 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
         return File("${appDirectory.path}/${widget.vedioName}.mp4");
       }
     } catch (e) {
+
       log("get video : $e");
       setState(() {
         isVideoNotFound = true;
@@ -285,16 +297,6 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
                           ),
                         ),
                       ),
-
-                      // Container(
-                      //   //height: 100,
-                      //   height: MediaQuery.of(context).size.height,
-                      //   // width:MediaQuery.of(context).size.width,
-                      //   child: ClipRect(
-                      //     child: VideoPlayer(controller),
-                      //     clipper: RectClipper(context: context),
-                      //   ),
-                      // ),
                       showOverlay
                           ? Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -314,15 +316,18 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
                                     icon: Icon(
                                       Icons.arrow_back,
                                       color: Colors.white,
-                                      size: 36,
+                                      size: 24,
                                     ),
                                   ),
                                   SizedBox(
                                     width: 8,
                                   ),
-                                  Text(
-                                    "${widget.title}",
-                                    style: TextStyle(color: Colors.white, fontSize: 24),
+                                  Container(
+                                    width:MediaQuery.of(context).size.width*0.7,
+                                    child: Text(
+                                      "${widget.title}",
+                                      style: TextStyle(color: Colors.white, fontSize: 18),
+                                    ),
                                   )
                                 ],
                               ),
@@ -331,46 +336,121 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
                       showOverlay
                           ? Container(
                               height: MediaQuery.of(context).size.height,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                              child: Stack(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text(
-                                          controller.value.position.toString().substring(0, 7),
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
+                                  // Positioned(
+                                  //     bottom: 20,
+                                  //     right: 0,
+                                  //     child: IconButton(
+                                  //       icon: Icon(
+                                  //         Icons.settings,
+                                  //         color: Colors.white,
+                                  //       ),
+                                  //       onPressed: () async {
+                                  //         Map<int, String> aud = await controller.getAudioTracks();
+                                  //         aud.forEach((key, value) {
+                                  //           log(key.toString() + value.toString());
+                                  //         });
+                                  //         showMaterialModalBottomSheet(
+                                  //           context: context,
+                                  //           builder: (context) => Container(),
+                                  //         );
+                                  //       },
+                                  //     )),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  width: 20,
+                                                ),
+                                                Text(
+                                                  controller.value.position
+                                                      .toString()
+                                                      .substring(0, 7),
+                                                  style: TextStyle(color: Colors.white),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                            child: Container(
+                                              child: GestureDetector(
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(50),
+                                                  color: Colors.black,
+                                                ),    
+                                                padding: EdgeInsets.all(8),
+                                                  child: Center(
+                                                    child: Icon(
+                                                      Icons.subtitles ,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                                onTap: () async {
+                                                  Map<int, String> aud =
+                                                      await controller.getAudioTracks();
+                                                  aud.forEach((key, value) {
+                                                    log(key.toString() + value.toString());
+                                                  });
+                                                  int? selectedTrack = await controller.getAudioTrack();
+                                                  showMaterialModalBottomSheet(
+                                                    context: context,
+                                                    backgroundColor: Colors.transparent,
+                                                    builder: (context) => Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        PlayerMenu(
+                                                          audioTracks:aud,
+                                                          selectedAudio: selectedTrack??1,
+                                                          onAudioTrackChanged: (newNum){
+                                                            setState(() {
+                                                              controller.setAudioTrack(newNum);
+                                                            });
+                                            
+                                                          },
+                                                        )
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Container(
+                                        height: 18,
+                                        child: Slider(
+                                            value: sliderValue,
+                                            min: 0.0,
+                                            max: controller.value.duration.inSeconds == 0
+                                                ? 1.0
+                                                : controller.value.duration.inSeconds.toDouble(),
+                                            onChanged: (progress) {
+                                              setState(() {
+                                                sliderValue = progress.floor().toDouble();
+                                                if (sliderValue.isInfinite || sliderValue.isNaN) {
+                                                } else {
+                                                  controller.setTime(sliderValue.toInt() * 1000);
+                                                }
+                                              });
+                                            }),
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      )
+                                    ],
                                   ),
-                                  Slider(
-                                      value: sliderValue,
-                                      min: 0.0,
-                                      max: controller.value.duration.inSeconds == 0
-                                          ? 1.0
-                                          : controller.value.duration.inSeconds.toDouble(),
-                                      onChanged: (progress) {
-                                        setState(() {
-                                          sliderValue = progress.floor().toDouble();
-                                          if (sliderValue.isInfinite || sliderValue.isNaN) {
-                                          } else {
-                                            controller.setTime(sliderValue.toInt() * 1000);
-                                          }
-                                        });
-                                      })
-
-                                  // showOverlay
-                                  //     ? VideoProgressIndicator(
-                                  //         controller,
-                                  //         allowScrubbing: true,
-                                  //         padding: EdgeInsets.only(top: 10, bottom: 20),
-                                  //       )
-                                  //     : Container(),
                                 ],
                               ),
                             )
@@ -378,11 +458,17 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
                       showOverlay
                           ? Center(
                               child: IconButton(
-                                icon: Icon(
-                                  controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                                  color: Colors.white,
-                                  size: 64,
-                                ),
+                                icon: vidInitialised
+                                    ? Icon(
+                                        controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                                        color: Colors.white,
+                                        size: 64,
+                                      )
+                                    : Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                 onPressed: () {
                                   setState(() {
                                     if (controller.value.isPlaying) {

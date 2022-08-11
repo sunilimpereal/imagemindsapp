@@ -119,8 +119,9 @@ class GradeCard extends StatelessWidget {
                         image: grade.couseName,
                         showPlay: false,
                       ),
+                      SizedBox(height: 8,),
                       Container(
-                        height: height1 * 0.23,
+                        // height: height1 * 0.23,
                         width: width1,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,

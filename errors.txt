@@ -18,7 +18,7 @@ E/flutter (26769): #1      _LandscapeVedioPlayerState.initState.<anonymous closu
 E/flutter (26769): <asynchronous suspension>
 E/flutter (26769):
 E/AndroidRuntime(26769): FATAL EXCEPTION: AWindowHandler
-E/AndroidRuntime(26769): Process: com.example.imagemindsapp, PID: 26769
+E/AndroidRuntime(26769): Process: com.imageminds.imagemindsapp, PID: 26769
 E/AndroidRuntime(26769): java.lang.RuntimeException: Error during detachFromGLContext (see logcat for details)
 E/AndroidRuntime(26769):        at android.graphics.SurfaceTexture.detachFromGLContext(SurfaceTexture.java:274)
 E/AndroidRuntime(26769):        at org.videolan.libvlc.AWindow$SurfaceTextureThread.detachFromGLContext(AWindow.java:672)
