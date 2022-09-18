@@ -9,6 +9,9 @@ import 'package:imagemindsapp/subpages/grade/screens/videos_screen.dart';
 import 'package:imagemindsapp/subpages/data/bloc/scrre_bloc.dart';
 import 'package:imagemindsapp/subpages/data/bloc/vedioScreenBloc.dart';
 
+import '../main.dart';
+import '../utils/methods.dart';
+
 class SubPage extends StatefulWidget {
   final String text;
   const SubPage({Key? key, required this.text}) : super(key: key);
@@ -24,6 +27,11 @@ class _SubPageState extends State<SubPage> {
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
     ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkLogin(context: context);
+      print("asdas" + sharedPref.password.toString());
+    });
     super.initState();
   }
 

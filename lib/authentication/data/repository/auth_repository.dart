@@ -9,9 +9,11 @@ import 'package:imagemindsapp/authentication/data/models/login_response.dart';
 import 'package:imagemindsapp/authentication/data/models/logout_request.dart';
 import 'package:imagemindsapp/authentication/data/models/logout_response.dart';
 import 'package:imagemindsapp/authentication/data/models/otplogin_request_model.dart';
+import 'package:imagemindsapp/authentication/data/models/updateDeviceIdRequestModel.dart';
 import 'package:imagemindsapp/authentication/login/widgets/loginError.dart';
 import 'package:imagemindsapp/main.dart';
 import 'package:imagemindsapp/repository/repositry.dart';
+import 'package:imagemindsapp/utils/methods.dart';
 import 'package:imagemindsapp/utils/shared_pref.dart';
 
 class AuthRepository {
@@ -22,7 +24,9 @@ class AuthRepository {
         'Accept': 'application/json',
         // 'Authorization': 'Bearer ${sharedPref.token}',
       };
-      LoginRequest loginRequest = LoginRequest(email: email, password: password);
+      String deviceId = await getDeviceId() ?? '';
+      LoginRequest loginRequest =
+          LoginRequest(email: email, password: password, deviceId: deviceId);
       final response = await API.post(
           url: 'user/login', body: loginRequest.toJson(), context: context, headers: postheaders);
       log(response.body.toString());
@@ -34,7 +38,8 @@ class AuthRepository {
         return true;
       } else {
         LoginErrorModel loginError = loginErrorModelFromJson(response.body);
-        showloginErrorDialog(context: context, errorMessage: loginError.detail);
+        showloginErrorDialog(
+            context: context, errorMessage: loginError.detail, email: email, password: password);
         log('filaed 2');
         return false;
       }
@@ -64,7 +69,8 @@ class AuthRepository {
         return loginOtpResponseModel;
       } else {
         LoginErrorModel loginError = loginErrorModelFromJson(response.body);
-        showloginErrorDialog(context: context, errorMessage: loginError.detail);
+        showloginErrorDialog(
+            context: context, errorMessage: loginError.detail, email: '', password: '');
         log('filaed 2');
         log('filaed 2');
         return null;
@@ -84,8 +90,9 @@ class AuthRepository {
       'Content-Type': 'application/json'
       // 'Authorization': 'Bearer ${sharedPref.token}',
     };
+    String deviceId = await getDeviceId() ?? '';
     OtpLoginRequestModel otpLoginRequestModel =
-        OtpLoginRequestModel(mobile: mobile.toString(), otp: otp);
+        OtpLoginRequestModel(mobile: mobile.toString(), otp: otp, deviceId: deviceId);
     log(otpLoginRequestModelToJson(otpLoginRequestModel));
     final response = await API.post(
         url: 'user/login_otp_verify',
@@ -96,6 +103,7 @@ class AuthRepository {
     if (response.statusCode == 200) {
       LoginResponseModel loginResponse = loginResponseModelFromJson(response.body);
       sharedPrefs.setUserDetails(loginResponseModel: loginResponse);
+
       sharedPref.setLoggedIn();
       sharedPref.setAuthToken(token: "");
       return true;
@@ -122,6 +130,32 @@ class AuthRepository {
       if (response.statusCode == 200) {
         LogoutResponse loginResponse = LogoutResponseFromJson(response.body);
         sharedPref.setLoggedOut();
+        return true;
+      } else {
+        log('filaed 2');
+        return false;
+      }
+    } catch (e) {
+      log('filaed 3 $e');
+      return false;
+    }
+  }
+
+  Future<bool> resetDeviceId({required BuildContext context, required String email}) async {
+    try {
+      Map<String, String>? postheaders = {
+        'Accept': 'application/json',
+        // 'Authorization': 'Bearer ${sharedPref.token}',
+      };
+      UpdateDeviceIdRequestModel updateDeviceIdRequestModel =
+          UpdateDeviceIdRequestModel(email: email, deviceId: "0");
+      final response = await API.post(
+          url: 'user/updateDeviceId',
+          body: updateDeviceIdRequestModel.toJson(),
+          context: context,
+          headers: postheaders);
+      log("reser" + response.body);
+      if (response.statusCode == 200) {
         return true;
       } else {
         log('filaed 2');

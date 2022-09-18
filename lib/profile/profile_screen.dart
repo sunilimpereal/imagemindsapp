@@ -1,3 +1,4 @@
+import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:imagemindsapp/authentication/bloc/login_bloc.dart';
 import 'package:imagemindsapp/authentication/data/repository/auth_repository.dart';
@@ -22,6 +23,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       VedioScreenProvider.of(context).updateSelectedScreen(grade: "", course: "");
     });
@@ -212,6 +214,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget parentsInformation(StudentProfileModel student) {
+    List dropdownItemList = [
+      {'label': 'SD Card', 'value': 'sdcard'}, // label is required and unique
+      {'label': 'Cloud', 'value': 'cloud'},
+  
+    ];
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,6 +258,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               fieldCard(name: "Country", data: student.country),
               fieldCard(name: "Pincode", data: student.zipcode),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                "Video Source",
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(width: 16,),
+              CoolDropdown(
+              dropdownList: dropdownItemList,
+              onChange: (source) {
+              print("player1"+source['value']);
+                sharedPref.setVideoSourceType(source: source['value']);
+
+              },
+              dropdownHeight: 140,
+              defaultValue: dropdownItemList[0],
+              // placeholder: 'insert...',
+            )
             ],
           )
         ],

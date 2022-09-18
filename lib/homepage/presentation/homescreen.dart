@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:imagemindsapp/homepage/Widget/maintile.dart';
+import 'package:imagemindsapp/main.dart';
 import 'package:imagemindsapp/subpages/grade/data/repository/grade_bloc.dart';
 import 'package:imagemindsapp/subpages/main_sub_page.dart';
 import 'package:imagemindsapp/subpages/data/bloc/scrre_bloc.dart';
 import 'package:imagemindsapp/subpages/data/bloc/vedioScreenBloc.dart';
+
+import '../../utils/methods.dart';
 
 class HomePageWrapper extends StatelessWidget {
   const HomePageWrapper({Key? key}) : super(key: key);
@@ -29,7 +32,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        checkLogin(context: context);
+      print("asdas"+ sharedPref.password.toString());
+    });
     super.initState();
   }
 

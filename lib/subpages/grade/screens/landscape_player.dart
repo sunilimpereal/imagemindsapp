@@ -8,13 +8,13 @@ import 'package:disk_space/disk_space.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:imagemindsapp/main.dart';
 import 'package:imagemindsapp/subpages/grade/screens/widgets/player_menu.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';
 import 'dart:io';
-import 'package:screen/screen.dart';
+import 'package:wakelock/wakelock.dart';
 
 class LandscapeVedioPlayer extends StatefulWidget {
   String vedioName;
@@ -35,102 +35,117 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
   bool isVideoNotFound = false;
   bool vidInitialised = false;
   final stopwatch = Stopwatch()..start();
+  Duration vidduration = Duration(seconds: 20);
   @override
   void initState() {
     initialize();
     super.initState();
   }
 
+  void getDuration() async {
+    Duration vdur = await controller.getDuration();
+    setState(() {
+      vidduration = vdur;
+    });
+  }
+
   void initialize() async {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    
-    // online
-    // try {
-    //   controller = VlcPlayerController.network(
-    //     "https://iminds.s3.ap-south-1.amazonaws.com/videos/${widget.vedioName}.mp4",
-    //     hwAcc: HwAcc.disabled,
-    //     options: VlcPlayerOptions(),
-    //   );
-    //   // ..addListener(() {
-    //   //   setState(() {});
-    //   // })
-    //   // ..setLooping(true);
-    //   // await controller.initialize();
-    //   // controller.play();
-    //   setState(() {
-    //     initialised = true;
-    //   });
-
-    //   // log(controller.toString());
-    //   // log(controller.value.toString());
-    //   // if (controller.value.duration.inSeconds == 0) {
-    //   //   setState(() {
-    //   //     error = "Video not found";
-    //   //   });
-    //   // }
-
-    //   controller.addListener(() {
-    //       Screen.keepOn(true);
-    //     setState(() {
-    //       sliderValue = controller.value.position.inSeconds.toDouble();
-    //       if (controller.value.position.inMilliseconds.toDouble() > 0) {
-    //         vidInitialised = true;
-    //       }
-    //       ;
-    //     });
-    //   });
-    // } catch (e) {
-    //   log("files : $e");
-    //   setState(() {
-    //     error = "Video not found";
-    //   });
-    // }
-    //offline
-    try {
-      if (widget.vedioName.contains("Demo")) {
-        var path = await ExternalPath.getExternalStorageDirectories();
-        File video = File("${path[1]}/Classes/${widget.vedioName}.mp4");
-        log(video.path);
-        controller = VlcPlayerController.file(
-          video,
+    if (sharedPref.source == "cloud") {
+      print("online player1");
+      // online
+      try {
+        controller = VlcPlayerController.network(
+          "https://iminds.s3.ap-south-1.amazonaws.com/videos/${widget.vedioName}.mp4",
           hwAcc: HwAcc.disabled,
           options: VlcPlayerOptions(),
         );
+
+        // ..addListener(() {
+        //   setState(() {});
+        // })
+        // ..setLooping(true);
+        // await controller.initialize();
+        // controller.play();
         setState(() {
+          getDuration();
           initialised = true;
         });
+
+        // log(controller.toString());
+        // log(controller.value.toString());
+        // if (controller.value.duration.inSeconds == 0) {
+        //   setState(() {
+        //     error = "Video not found";
+        //   });
+        // }
+
         controller.addListener(() {
+          Wakelock.enable();
+
           setState(() {
             sliderValue = controller.value.position.inSeconds.toDouble();
-            Screen.keepOn(true);
+            if (controller.value.position.inMilliseconds.toDouble() > 0) {
+              vidInitialised = true;
+            }
           });
         });
-      } else {
-        getVedio().then((value) {
+      } catch (e) {
+        log("files : $e");
+        setState(() {
+          error = "Video not found";
+        });
+      }
+    } else {
+      print("offline player1");
+      //offline
+      try {
+        if (widget.vedioName.contains("Demo")) {
+          var path = await ExternalPath.getExternalStorageDirectories();
+          File video = File("${path[1]}/Classes/${widget.vedioName}.mp4");
+          log(video.path);
           controller = VlcPlayerController.file(
-            value ?? File(widget.vedioName),
+            video,
             hwAcc: HwAcc.disabled,
             options: VlcPlayerOptions(),
           );
-          // ..addListener(() {
-          // })
-          // ..setLooping(true)
-          // ..initialize().then((value) {
-          //   controller.play();
           setState(() {
             initialised = true;
           });
           controller.addListener(() {
             setState(() {
               sliderValue = controller.value.position.inSeconds.toDouble();
-              Screen.keepOn(true);
+              Wakelock.enable();
             });
           });
-          // });
-        });
+        } else {
+          getVedio().then((value) {
+            controller = VlcPlayerController.file(
+              value ?? File(widget.vedioName),
+              hwAcc: HwAcc.disabled,
+              options: VlcPlayerOptions(),
+            );
+            // ..addListener(() {
+            // })
+            // ..setLooping(true)
+            // ..initialize().then((value) {
+            //   controller.play();
+            setState(() {
+              getDuration();
+              initialised = true;
+            });
+            controller.addListener(() {
+              setState(() {
+                sliderValue = controller.value.position.inSeconds.toDouble();
+                Wakelock.enable();
+              });
+            });
+            // });
+          });
+        }
+      } catch (e) {
+        log("files : $e");
       }
-    } catch (e) {
-      log("files : $e");
     }
   }
 
@@ -139,9 +154,7 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
   //   final appDirectory = await getApplicationDocumentsDirectory();
   //   var path = await ExternalPath.getExternalStorageDirectories();
   //   double? space = await DiskSpace.getFreeDiskSpaceForPath(appDirectory.path);
-
   //   File e = File("${path[1]}/Classes/${widget.vedioName}.mp4");
-
   //   String data = e.readAsStringSync();
   //   List<int> list = data.codeUnits;
   //   log(list.toString());
@@ -201,7 +214,6 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
         return File("${appDirectory.path}/${widget.vedioName}.mp4");
       }
     } catch (e) {
-
       log("get video : $e");
       setState(() {
         isVideoNotFound = true;
@@ -218,6 +230,7 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    getDuration();
     log(stopwatch.elapsed.toString());
     if (stopwatch.elapsed.compareTo(Duration(seconds: 5)) > 0) {
       if (this.mounted) {
@@ -225,6 +238,12 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
           showOverlay = false;
         });
       }
+    }
+    if (controller.value.position.inSeconds >= vidduration.inSeconds - 1) {
+      setState(() {
+        log("sdurat" + vidduration.inSeconds.toString());
+        controller.seekTo(Duration(milliseconds: 0));
+      });
     }
     return Scaffold(
       backgroundColor: Colors.black,
@@ -323,7 +342,7 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
                                     width: 8,
                                   ),
                                   Container(
-                                    width:MediaQuery.of(context).size.width*0.7,
+                                    width: MediaQuery.of(context).size.width * 0.7,
                                     child: Text(
                                       "${widget.title}",
                                       style: TextStyle(color: Colors.white, fontSize: 18),
@@ -385,13 +404,13 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
                                               child: GestureDetector(
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(50),
-                                                  color: Colors.black,
-                                                ),    
-                                                padding: EdgeInsets.all(8),
+                                                    borderRadius: BorderRadius.circular(50),
+                                                    color: Colors.black,
+                                                  ),
+                                                  padding: EdgeInsets.all(8),
                                                   child: Center(
                                                     child: Icon(
-                                                      Icons.subtitles ,
+                                                      Icons.subtitles,
                                                       color: Colors.white,
                                                     ),
                                                   ),
@@ -402,7 +421,8 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
                                                   aud.forEach((key, value) {
                                                     log(key.toString() + value.toString());
                                                   });
-                                                  int? selectedTrack = await controller.getAudioTrack();
+                                                  int? selectedTrack =
+                                                      await controller.getAudioTrack();
                                                   showMaterialModalBottomSheet(
                                                     context: context,
                                                     backgroundColor: Colors.transparent,
@@ -410,13 +430,12 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
                                                         PlayerMenu(
-                                                          audioTracks:aud,
-                                                          selectedAudio: selectedTrack??1,
-                                                          onAudioTrackChanged: (newNum){
+                                                          audioTracks: aud,
+                                                          selectedAudio: selectedTrack ?? 1,
+                                                          onAudioTrackChanged: (newNum) {
                                                             setState(() {
                                                               controller.setAudioTrack(newNum);
                                                             });
-                                            
                                                           },
                                                         )
                                                       ],

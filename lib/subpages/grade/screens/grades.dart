@@ -11,8 +11,6 @@ import 'package:imagemindsapp/subpages/data/bloc/vedioScreenBloc.dart';
 import 'package:imagemindsapp/subpages/grade/data/models/gradeModel.dart';
 import 'package:imagemindsapp/subpages/grade/data/repository/grade_bloc.dart';
 import 'package:imagemindsapp/utils/trianglepainter.dart';
-import 'package:open_file/open_file.dart';
-
 class GradesScreen extends StatefulWidget {
   const GradesScreen({Key? key}) : super(key: key);
 
@@ -23,7 +21,7 @@ class GradesScreen extends StatefulWidget {
 class _GradesScreenState extends State<GradesScreen> {
   @override
   void initState() {
-    OpenFile.open("/Classes/p.mp4");
+    // OpenFile.open("/Classes/p.mp4");
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       VedioScreenProvider.of(context).updateSelectedScreen(grade: "", course: "");
     });

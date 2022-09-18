@@ -13,13 +13,15 @@ class SharedPref {
   }
 
   //gettter
-  bool    get loggedIn  => _sharedPref!.getBool('loggedIn') ?? false;
-  String  get id        => _sharedPref!.getString('id') ?? "";
-  String  get email     => _sharedPref!.getString('email') ?? "";
-  String  get firstName => _sharedPref!.getString('firstName') ?? "";
-  String  get lastName  => _sharedPref!.getString('lastName') ?? "";
-  String  get medium    => _sharedPref!.getString('medium') ?? "";
-  String? get token     => _sharedPref!.getString('authToken');
+  bool get loggedIn => _sharedPref!.getBool('loggedIn') ?? false;
+  String get id => _sharedPref!.getString('id') ?? "";
+  String get email => _sharedPref!.getString('email') ?? "";
+  String get firstName => _sharedPref!.getString('firstName') ?? "";
+  String get lastName => _sharedPref!.getString('lastName') ?? "";
+  String get medium => _sharedPref!.getString('medium') ?? "";
+  String? get token => _sharedPref!.getString('authToken');
+  String? get password => _sharedPref!.getString('password');
+  String? get source => _sharedPref!.getString('source');
 
   ///Set as logged in
   setLoggedIn() {
@@ -42,14 +44,17 @@ class SharedPref {
     _sharedPref!.setString('firstName', loginResponseModel.firstName);
     _sharedPref!.setString('lastName', loginResponseModel.lastName);
     _sharedPref!.setString('medium', loginResponseModel.medium);
-    
-
+    _sharedPref!.setString('password', loginResponseModel.password);
   }
 
   ///set Auth token for the app
   setAuthToken({required String token}) {
     _sharedPref!.setString('authToken', token);
   }
+  setVideoSourceType({required String source}) {
+    _sharedPref!.setString('source', source);
+  }
+  
 }
 
 final sharedPrefs = SharedPref();
