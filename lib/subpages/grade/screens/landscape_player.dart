@@ -115,6 +115,9 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
           controller.addListener(() {
             setState(() {
               sliderValue = controller.value.position.inSeconds.toDouble();
+              if (controller.value.position.inMilliseconds.toDouble() > 0) {
+                vidInitialised = true;
+              }
               Wakelock.enable();
             });
           });
@@ -137,6 +140,9 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
             controller.addListener(() {
               setState(() {
                 sliderValue = controller.value.position.inSeconds.toDouble();
+                if (controller.value.position.inMilliseconds.toDouble() > 0) {
+                  vidInitialised = true;
+                }
                 Wakelock.enable();
               });
             });
@@ -230,20 +236,22 @@ class _LandscapeVedioPlayerState extends State<LandscapeVedioPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    getDuration();
-    log(stopwatch.elapsed.toString());
-    if (stopwatch.elapsed.compareTo(Duration(seconds: 5)) > 0) {
-      if (this.mounted) {
+    if (initialised) {
+      getDuration();
+      // log(stopwatch.elapsed.toString());
+      if (stopwatch.elapsed.compareTo(Duration(seconds: 5)) > 0) {
+        if (this.mounted) {
+          setState(() {
+            showOverlay = false;
+          });
+        }
+      }
+      if (controller.value.position.inSeconds >= vidduration.inSeconds - 1) {
         setState(() {
-          showOverlay = false;
+          // log("sdurat" + vidduration.inSeconds.toString());
+          controller.seekTo(Duration(milliseconds: 0));
         });
       }
-    }
-    if (controller.value.position.inSeconds >= vidduration.inSeconds - 1) {
-      setState(() {
-        log("sdurat" + vidduration.inSeconds.toString());
-        controller.seekTo(Duration(milliseconds: 0));
-      });
     }
     return Scaffold(
       backgroundColor: Colors.black,

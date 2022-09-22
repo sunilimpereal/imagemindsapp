@@ -5,7 +5,7 @@ class ValidationMixin {
     if (!email.contains('@')) {
       sink.addError('Please Enter Valid Email');
     } else if (email.contains(' ')) {
-      sink.addError('Seriously');
+      sink.addError('Please Enter Valid Email');
     } else {
       sink.add(email);
     }

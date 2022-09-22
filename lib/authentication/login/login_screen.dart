@@ -20,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
   bool loginFailFlag = false;
+  bool enterbuttonloading = false;
+
   ontap() {
     setState(() {});
   }
@@ -117,6 +119,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               : MediaQuery.of(context).size.width * 0.235,
                           formValidationStream: loginBloc.validateFormStream,
                           submit: () async {
+                            if(!enterbuttonloading){
+                              setState(() {
+                                enterbuttonloading = true;
+                              });
                             AuthRepository authRepository = AuthRepository();
                             authRepository
                                 .login(
@@ -125,6 +131,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               context: context,
                             )
                                 .then((value) {
+                                  setState(() {
+                                enterbuttonloading = false;
+                              });
                               Future.delayed(const Duration(milliseconds: 200)).then((value1) {
                                 if (value)
                                   Navigator.pushReplacement(
@@ -137,6 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 });
                               });
                             });
+                            }else{
+
+                            }
                           },
                           text: 'Enter',
                           errrorText: 'Sign In Failed',

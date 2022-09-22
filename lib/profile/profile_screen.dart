@@ -260,27 +260,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
               fieldCard(name: "Pincode", data: student.zipcode),
             ],
           ),
-          Row(
-            children: [
-              Text(
-                "Video Source",
-                style: TextStyle(
-                  fontSize: 18,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Text(
+                  "Video Source",
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
-              ),
-              SizedBox(width: 16,),
-              CoolDropdown(
-              dropdownList: dropdownItemList,
-              onChange: (source) {
-              print("player1"+source['value']);
-                sharedPref.setVideoSourceType(source: source['value']);
-
-              },
-              dropdownHeight: 140,
-              defaultValue: dropdownItemList[0],
-              // placeholder: 'insert...',
-            )
-            ],
+                SizedBox(width: 16,),
+                CoolDropdown(
+                dropdownList: dropdownItemList,
+                onChange: (source) {
+                print("player1"+source['value']);
+                  sharedPref.setVideoSourceType(source: source['value']);
+          
+                },
+                dropdownHeight: 140,
+                defaultValue: dropdownItemList[0],
+                // placeholder: 'insert...',
+              )
+              ],
+            ),
           )
         ],
       ),

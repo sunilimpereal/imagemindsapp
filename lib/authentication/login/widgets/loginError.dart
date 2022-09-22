@@ -72,7 +72,7 @@ class LoginErrorAlert extends StatelessWidget {
       title: Text("Login Failed"),
       content: Text("$errorText"),
       actions: [
-        logoutfromotherdevice,
+       errorMessage == "Already Logged In "? logoutfromotherdevice:Container(),
         okButton,
       ],
     );

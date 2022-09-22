@@ -8,7 +8,7 @@ import 'package:imagemindsapp/subpages/grade/screens/grades.dart';
 import 'package:imagemindsapp/subpages/grade/screens/videos_screen.dart';
 import 'package:imagemindsapp/subpages/data/bloc/scrre_bloc.dart';
 import 'package:imagemindsapp/subpages/data/bloc/vedioScreenBloc.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import '../main.dart';
 import '../utils/methods.dart';
 
@@ -28,9 +28,13 @@ class _SubPageState extends State<SubPage> {
       DeviceOrientation.landscapeLeft,
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       checkLogin(context: context);
       print("asdas" + sharedPref.password.toString());
+      var status = await Permission.storage.status;
+                  if (!status.isGranted) {
+                    await Permission.storage.request();
+                  }
     });
     super.initState();
   }
